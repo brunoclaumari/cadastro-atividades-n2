@@ -14,19 +14,19 @@ import {
 import {} from "react-native-web";
 
 export default function TipoAtividade({ navigation }) {
-  /*  async function adicionaDados(teste_json) {
-    await adicionaTipoAtividade(teste_json);
-  }*/
+
 
   //deleteTable();
+//createTable();
 
-  /*createTable();
-
+/*    async function adicionaDados(teste_json) {
+    await adicionaTipoAtividade(teste_json);
+  }
   let teste_json = {
     descricao: "N2_Teste",
   };
 
-  adicionaDados(teste_json);*/
+  adicionaDados(teste_json); */
 
   async function carregaTodos() {
     try {
