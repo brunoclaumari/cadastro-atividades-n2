@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
   },
 
   listaContatos: {
-    width: "100%",
+    //alignContent:'center',
+    width: "90%",
     height: "100%",
     backgroundColor: "#FFF",
     marginTop: 20,
@@ -85,14 +86,15 @@ const styles = StyleSheet.create({
 
   tipoAtividade: {
     backgroundColor: "#82edb4",
-    flexDirection: "row",
+    flexDirection: "row",    
     height: 80,
     alignItems: "center",
     margin: 10,
     borderRadius: 5,
     shadowColor: "#000",
-    paddingHorizontal: 20,
-    justifyContent: "space-around",
+    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    //justifyContent: "space-around",    
     /*shadowOffset: {
       width: 0,
       height: 1,*/

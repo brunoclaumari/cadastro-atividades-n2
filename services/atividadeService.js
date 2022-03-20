@@ -31,7 +31,7 @@ export async function createTable() {
       local_atividade TEXT NOT NULL,
       data_entrega TEXT NOT NULL,
       hora_entrega TEXT NOT NULL,
-      status INTEGER NOT NULL   
+      status INTEGER NOT NULL,   
       
       FOREIGN KEY (id_tipo_atividade)
       REFERENCES tbTipoAtividade (id) 
@@ -62,7 +62,7 @@ export function obtemTodasAtividades() {
       tx.executeSql(comando, [],
         (tx, registros) => {
           //console.log(`Registros: ${JSON.stringify(registros)}`);
-          console.log(`Registros rows: ${JSON.stringify(registros.rows)}`);
+          //console.log(`Registros rows: ${JSON.stringify(registros.rows)}`);
 
           var retorno = [];
           if (registros.rows.length > 0) {
@@ -76,7 +76,7 @@ export function obtemTodasAtividades() {
                 hora_entrega: registros.rows.item(n).hora_entrega,
                 status: registros.rows.item(n).status
               }
-              console.log(`Objeto ${n} - ${JSON.stringify(obj)}`)
+              //console.log(`Objeto ${n} - ${JSON.stringify(obj)}`)
               retorno.push(obj);
             }
           }
@@ -204,6 +204,72 @@ export function excluiTodosUsuarios() {
       );
   }
   );
+}
+
+//Método para validar data
+export function validaDataX(data) {
+  // Ex: 10/01/1985
+  var regex = "\\d{2}/\\d{2}/\\d{4}";
+  var dtArray = data.split("/");
+
+  if (dtArray == null)
+    return false;
+
+  // Checks for dd/mm/yyyy format.
+  var dtDay = dtArray[0];
+  var dtMonth = dtArray[1];
+  var dtYear = dtArray[2];
+
+  if (dtMonth < 1 || dtMonth > 12)
+    return false;
+  else if (dtDay < 1 || dtDay > 31)
+    return false;
+  else if ((dtMonth == 4 || dtMonth == 6 || dtMonth == 9 || dtMonth == 11) && dtDay == 31)
+    return false;
+  else if (dtMonth == 2) {
+    var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+    if (dtDay > 29 || (dtDay == 29 && !isleap))
+      return false;
+  }
+  return true;
+}
+
+export function validaData(data){
+  let ehValido = false;
+  let msg = '';
+  const dataValida=/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/[12][0-9]{3}$/;
+  if(dataValida.test(data)){
+    ehValido=true;
+  }
+  else{
+    msg += 'Data inválida \n';
+    ehValido = false;
+  }
+  console.log(`Data válida: ${ehValido}`);  
+  return msg;
+}
+
+export function validaHora(hora){
+  let ehValido = false;
+  let msg = '';
+  const horaValida = /^([0-2][0-3]|[2][0-3]):[0-5][0-9]$/;
+  if(horaValida.test(hora)){
+    ehValido=true;
+  }
+  else{
+    ehValido=false;
+    msg+="Hora inválida! \n"
+  }
+
+  console.log(`Hora válida: ${ehValido}`);  
+  return msg;
+}
+
+export function validaTudo(data, hora){  
+  let mensagemErro='';
+  mensagemErro += validaData(data) + validaHora(hora);
+  
+  return mensagemErro;
 }
 
 

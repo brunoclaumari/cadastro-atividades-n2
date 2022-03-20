@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Keyboard } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -47,7 +47,7 @@ const DropdownComponent = (props) => {
           props.setValue(item[props.campoId]);
           console.log(item[props.campoId].toString())
           console.log(item[props.label])
-          setIsFocus(false);          
+          setIsFocus(false);                  
         }}
         renderLeftIcon={() => (
           <AntDesign
