@@ -23,6 +23,7 @@ import {
 } from "../../services/tipoAtividadeService";
 
 export default function TipoAtividade({ navigation }) {
+
   const [id, setId] = useState();
   const [descricao, setDescricao] = useState();
   const [listaTipoAtividade, setlistaTipoAtividade] = useState([]);
