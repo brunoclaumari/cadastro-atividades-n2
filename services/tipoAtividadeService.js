@@ -40,31 +40,8 @@ export async function createTable() {
   });
 }
 
-export function adicionaTipoAtividade(tipo_atividade) {
-  return new Promise((resolve, reject) => {
-    let query = `INSERT INTO ${tabela} (descricao) values (?)`;
-    let dbCx = getDbConnection();
-
-    dbCx.transaction(
-      (tx) => {
-        //os parametros devem ser passados na ordem id, nome, telefone.
-        tx.executeSql(query, [tipo_atividade.descricao], (tx, resultado) => {
-          // (resultado.rowsAffected > 0) retornar um booleano, se
-          // Sendo "resultado.rowsAffected > 0" retornará true
-          console.log(tipo_atividade.descricao);
-          resolve(resultado.rowsAffected > 0);
-        });
-      },
-      (error) => {
-        console.log(error);
-        resolve(false);
-      }
-    );
-  });
-}
-
 export function obtemTodosTiposAtividades() {
-  console.log("obtendo todos os contatos");
+  console.log("obtendo todos os tipos de Atividades");
   return new Promise((resolve, reject) => {
     let dbCx = getDbConnection();
     dbCx.transaction(
@@ -101,10 +78,60 @@ export function obtemTodosTiposAtividades() {
   });
 }
 
-export function excluiTodosContatos() {
-  console.log("Apagando todos os contatos...");
+export function adicionaTipoAtividade(tipo_atividade) {
+  console.log("adicionado nova atividade");
+  console.log(tipo_atividade.descricao);
   return new Promise((resolve, reject) => {
-    let query = "delete from tbContatos";
+    let query = `INSERT INTO ${tabela} (descricao) values (?)`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        //os parametros devem ser passados na ordem
+        tx.executeSql(query, [tipo_atividade.descricao], (tx, resultado) => {
+          // (resultado.rowsAffected > 0) retornar um booleano, se
+          // Sendo "resultado.rowsAffected > 0" retornará true
+          console.log(tipo_atividade.descricao);
+          resolve(resultado.rowsAffected > 0);
+        });
+      },
+      (error) => {
+        console.log(error);
+        resolve(false);
+      }
+    );
+  });
+}
+
+export function alteraTipoAtividade(tipo_atividade) {
+  console.log("começando o o método alteraTipoAtividade");
+  console.log(tipo_atividade);
+  return new Promise((resolve, reject) => {
+    let query = `update ${tabela} set descricao=? where id=?`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(
+          query,
+          [tipo_atividade.descricao, tipo_atividade.id],
+          (tx, resultado) => {
+            resolve(resultado.rowsAffected > 0);
+          }
+        );
+      },
+      (error) => {
+        console.log(error.toString());
+        resolve(false);
+      }
+    );
+  });
+}
+
+export function excluiTodosTipoAtividade() {
+  console.log("Apagando todos os tipos de atividades...");
+  return new Promise((resolve, reject) => {
+    let query = `delete from ${tabela}`;
     let dbCx = getDbConnection();
     dbCx.transaction(
       (tx) => {
@@ -120,7 +147,27 @@ export function excluiTodosContatos() {
   });
 }
 
-export function deleteTable() {
+export function excluiTipoAtividade(id) {
+  console.log("Apagando contato " + id);
+  return new Promise((resolve, reject) => {
+    let query = `delete from ${tabela} where id = ?`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(query, [id], (tx, resultado) => {
+          resolve(resultado.rowsAffected > 0);
+        });
+      },
+      (error) => {
+        console.log(error);
+        resolve(false);
+      }
+    );
+  });
+}
+
+/*export function deleteTable() {
   console.log("Apagando toda a tabela");
 
   return new Promise((resolve, reject) => {
@@ -138,4 +185,4 @@ export function deleteTable() {
       }
     );
   });
-}
+}*/
