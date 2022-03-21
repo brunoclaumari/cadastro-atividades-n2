@@ -87,7 +87,7 @@ export function obtemTodasAtividades(flagFiltro) {
             }
           }
 
-          console.log(`Retorno: ${JSON.stringify(retorno)}`);
+          //console.log(`Retorno: ${JSON.stringify(retorno)}`);
           resolve(retorno);
         })
     },

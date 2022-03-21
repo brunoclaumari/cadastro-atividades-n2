@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     },
     titulo: {
         fontSize: 30,
-        marginBottom: 50,
+        marginVertical: 10,
         fontWeight: 'bold'
     },
     conteinerBotao: {
