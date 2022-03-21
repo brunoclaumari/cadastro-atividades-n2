@@ -47,7 +47,8 @@ const DropdownComponent = (props) => {
           props.setValue(item[props.campoId]);
           console.log(item[props.campoId].toString())
           console.log(item[props.label])
-          setIsFocus(false);                  
+          setIsFocus(false);  
+          props.setRecarregaTela(props.recarrega)          
         }}
         renderLeftIcon={() => (
           <AntDesign

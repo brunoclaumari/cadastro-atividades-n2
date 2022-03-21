@@ -175,7 +175,7 @@ export default function TipoAtividade({ navigation }) {
       Keyboard.dismiss();
       limparCampos();
       setRecarregaTela(true);
-      Alert.alert("Contato apagado com sucesso!!!");
+      Alert.alert("Atividade apagada com sucesso!!!");
     } catch (e) {
       Alert.alert(e);
     }
