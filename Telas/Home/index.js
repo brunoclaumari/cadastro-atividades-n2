@@ -26,11 +26,11 @@ export default function Home({ navigation }) {
     const [criarTabela, setCriarTabela] = useState(false);
     const [isEnabled, setIsEnabled] = useState(false);
     const [status, setStatus] = useState(0);
-    const [flagFiltro, setFlagFiltro]=useState('1=1');
+    const [flagFiltro, setFlagFiltro] = useState('1=1');
 
     async function carregarTodosOsDados() {
         try {
-            let resposta = await obtemTodasAtividades();
+            let resposta = await obtemTodasAtividades(flagFiltro);
             setListaAtividades(resposta);
             setRecarregaTela(false);
             //limparCampos();
@@ -83,12 +83,12 @@ export default function Home({ navigation }) {
         //let vetor={cor:'red', status:'Pendente'}
 
         if (numero === 0)
-            return { cor: 'red', status: 'Pendente', imagem:"toggle-switch-off" };
+            return { cor: 'red', status: 'Pendente', imagem: "toggle-switch-off" };
         else
-            return { cor: 'green', status: 'Concluido', imagem:"toggle-switch"  };
+            return { cor: 'green', status: 'Concluido', imagem: "toggle-switch" };
     }
 
-//    async function alteraStatus(thisId, thisStatus) {
+    //    async function alteraStatus(thisId, thisStatus) {
     async function alteraStatus(thisId, thisStatus) {
         try {
             thisStatus === 0 ? thisStatus = 1 : thisStatus = 0;
@@ -102,8 +102,8 @@ export default function Home({ navigation }) {
         }
     }
 
-    const filtro=[{indice:'0',descricao:"Pendente" },
-    {indice:'1',descricao:"Concluído" }, {indice:'1=1',descricao:"Todos" }]
+    let filtro = [{ indice: '0', descricao: "Pendente" },
+    { indice: '1', descricao: "Concluído" }, { indice: '1=1', descricao: "Todos" }]
 
     return (
 
@@ -125,9 +125,12 @@ export default function Home({ navigation }) {
                     <Text style={styles.textoBotao}>Tipo de Atividades</Text>
                 </TouchableOpacity>
             </View>
-{/*             <DropdownComponent setValue={setFlagFiltro}
-              value={indice} label="descricao" campoId="indice"
-              vetor={filtro} /> */}
+            <Text></Text>
+            <DropdownComponent setValue={setFlagFiltro}
+                setRecarregaTela={setRecarregaTela}
+                recarrega={true}
+                value={flagFiltro} label="descricao" campoId="indice"
+                vetor={filtro} />
 
             <ScrollView style={styles.listaContatos}>
                 {listaAtividades.map((atividade, index) => (
@@ -138,9 +141,9 @@ export default function Home({ navigation }) {
                             <Text style={[styles.listaTexto, { color: `${retornaPendencias(atividade.status).cor}` }]}> {retornaPendencias(atividade.status).status}</Text>
                         </View>
                         <View style={styles.chave}>
-                            
-                            <TouchableOpacity onPress={()=>
-                            alteraStatus(atividade.id,atividade.status)
+
+                            <TouchableOpacity onPress={() =>
+                                alteraStatus(atividade.id, atividade.status)
                             } >
                                 {/* <MaterialCommunityIcons name="toggle-switch-off-outline" size={45} color="black" /> */}
                                 <MaterialCommunityIcons name={retornaPendencias(atividade.status).imagem} size={45} color={retornaPendencias(atividade.status).cor} />

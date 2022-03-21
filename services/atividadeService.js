@@ -51,14 +51,20 @@ export async function createTable() {
 }
 
 //Busca todas as Atividades
-export function obtemTodasAtividades() {
+export function obtemTodasAtividades(flagFiltro) {
+  let filtro='1=1';
+  console.log(flagFiltro);
+  if(flagFiltro !== "1=1" && flagFiltro!=='' && flagFiltro!==undefined)
+    filtro = `status = ${Number.parseInt(flagFiltro)}`;
+
   return new Promise((resolve, reject) => {
 
     let dbCx = getDbConnection();
     //var retorno = {};
     dbCx.transaction(tx => {
-      let comando = `select * from ${tabela}`;
+      let comando = `select * from ${tabela} WHERE ${filtro} `;
       console.log(comando);
+      console.log(flagFiltro);
       tx.executeSql(comando, [],
         (tx, registros) => {
           //console.log(`Registros: ${JSON.stringify(registros)}`);
@@ -279,7 +285,8 @@ export function validaData(data){
 export function validaHora(hora){
   let ehValido = false;
   let msg = '';
-  const horaValida = /^([0-2][0-3]|[2][0-3]):[0-5][0-9]$/;
+  //const horaValida = /^([0-2][0-3]|[2][0-3]):[0-5][0-9]$/;
+  const horaValida = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
   if(horaValida.test(hora)){
     ehValido=true;
   }
