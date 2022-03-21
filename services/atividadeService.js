@@ -200,6 +200,28 @@ export function alteraStatusAtividade(id, status) {
   });
 }
 
+//Exclui Atividade por id
+export function excluiAtividade(id) {
+  console.log('Apagando atividade id: ' + id);
+  return new Promise((resolve, reject) => {
+      let comando = `DELETE from ${tabela} where id=?`;
+      let dbCx = getDbConnection();
+
+      dbCx.transaction(tx => {
+          tx.executeSql(comando, [id],
+              (tx, resultado) => {
+                  resolve(resultado.rowsAffected > 0);
+              })
+      },
+          error => {
+              console.log(error);
+              resolve(false);
+          }
+      )
+  }
+  );
+}
+
 //Método para validar data
 export function validaDataX(data) {
   // Ex: 10/01/1985
