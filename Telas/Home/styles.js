@@ -64,6 +64,8 @@ const styles = StyleSheet.create({
     dadosBotoesAcao: {
         //borderWidth: 1.0,
         width: "10%",
+        height:'80%',
+        justifyContent:'space-between'
     },
     conteinerDescricoes: {
 

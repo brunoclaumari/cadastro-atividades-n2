@@ -94,10 +94,24 @@ export default function Atividade({ navigation }) {
         setHoraEntrega(obj.hora_entrega);
         setIdTipoAtividade(obj.id_tipo_atividade);
         setStatus(obj.status);
+        //if(obj.status!==undefined)
+        verificaStatus(obj.status);
       }
+
 
       await carregarTodasAtividades();
     }
+  }
+  function verificaStatus(numStatus) {
+    let textSwitch = {};
+    if (numStatus == 0) {
+      textSwitch = { status: 0, cor: "red", texto: "Pendente" };
+      setIsEnabled(false);
+    } else {
+      textSwitch = { status: 1, cor: "green", texto: "Concluído" };
+      setIsEnabled(true);
+    }
+    setTextoSwitch(textSwitch);
   }
 
   useEffect(() => {
@@ -321,9 +335,9 @@ export default function Atividade({ navigation }) {
           >
             <Text style={styles.textoBotao}>Salvar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.botaoCancelar}>
+{/*           <TouchableOpacity style={styles.botaoCancelar}>
             <Text style={styles.textoBotao}>Cancelar</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.botaoApagaTudo}
             onPress={() => limparCampos()}

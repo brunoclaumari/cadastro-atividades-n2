@@ -5,7 +5,7 @@ import {StyleSheet, StatusBar} from 'react-native';
 //let tamanhoBorda = 2;
 let dimensions={
     raio:10,
-    largBotao: '32%',
+    largBotao: '45%',
     alturaBotao:50,
     tamanhoBorda: 2
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     conteinerBotao: {
-        width: '90%',
+        width: '80%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         //alignContent:'space-between'
@@ -146,8 +146,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4.65,        
         elevation: 7,
     },
-    switchConteiner:{
-        backgroundColor:'yellow',
+    switchConteiner:{        
         height:60
 
     },
