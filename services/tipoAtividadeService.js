@@ -41,7 +41,7 @@ export async function createTable() {
 }
 
 export function obtemTodosTiposAtividades() {
-  console.log("obtendo todos os tipos de Atividades");
+  //console.log("obtendo todos os tipos de Atividades");
   return new Promise((resolve, reject) => {
     let dbCx = getDbConnection();
     dbCx.transaction(
@@ -53,11 +53,11 @@ export function obtemTodosTiposAtividades() {
           [],
           // dando certo, vai retornar a transação e os registros
           (tx, registros) => {
-            console.log("Criando o vetor para guardar a lista");
-            console.log(registros.rows.length);
+            // console.log("Criando o vetor para guardar a lista");
+            // console.log(registros.rows.length);
             var retorno = []; // vetor para guardar a lista
             for (let n = 0; n < registros.rows.length; n++) {
-              console.log(n.descricao);
+              // console.log(n.descricao);
               let obj = {
                 id: registros.rows.item(n).id,
                 descricao: registros.rows.item(n).descricao,
@@ -91,7 +91,7 @@ export function adicionaTipoAtividade(tipo_atividade) {
         tx.executeSql(query, [tipo_atividade.descricao], (tx, resultado) => {
           // (resultado.rowsAffected > 0) retornar um booleano, se
           // Sendo "resultado.rowsAffected > 0" retornará true
-          console.log(tipo_atividade.descricao);
+          // console.log(tipo_atividade.descricao);
           resolve(resultado.rowsAffected > 0);
         });
       },
