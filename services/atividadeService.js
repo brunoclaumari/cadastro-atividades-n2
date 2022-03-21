@@ -133,7 +133,7 @@ export function adicionaAtividade(atividade) {
 
 //Altera Atividade
 export function alteraAtividade(atividade) {
-  console.log('Início do método alteraUsuario');
+  console.log('Início do método alteraAtividade');
   return new Promise((resolve, reject) => {
     //let comando = `UPDATE ${tabela} set nome=?, email=?, senha=?, confirmaSenha=?  WHERE codigo=?`;
     let comando = `UPDATE ${tabela} SET 
@@ -150,6 +150,33 @@ export function alteraAtividade(atividade) {
         atividade.hora_entrega,
         atividade.status,
         atividade.id],
+        (tx, resultado) => {
+          resolve(resultado.rowsAffected > 0);
+        })
+    },
+      error => {
+        console.log(error);
+        resolve(false);
+      }
+    )
+  }
+  );
+}
+
+//Altera status do componente
+export function alteraStatusAtividade(id, status) {
+  console.log('Início do método alteraStatusAtividade');
+
+  return new Promise((resolve, reject) => {
+    //let comando = `UPDATE ${tabela} set nome=?, email=?, senha=?, confirmaSenha=?  WHERE codigo=?`;
+    let comando = `UPDATE ${tabela} SET status=? WHERE id=?`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(tx => {
+      tx.executeSql(comando,
+        [
+        status,
+        id],
         (tx, resultado) => {
           resolve(resultado.rowsAffected > 0);
         })
@@ -186,7 +213,7 @@ export function excluiAtividade(id) {
 }
 
 //Exclui todas as atividades
-export function excluiTodosUsuarios() {
+export function excluiTodasAtividades() {
   console.log("Apagando todas as atividades...");
   return new Promise((resolve, reject) => {
       //let query = 'delete from tbContatos';
