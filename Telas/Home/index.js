@@ -1,25 +1,19 @@
 import { useState, useEffect } from "react";
 import {
-  ScrollView,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar as BarraSuperior,
-  Switch,
-} from "react-native";
+    ScrollView, Text, View,
+    TouchableOpacity, StatusBar as BarraSuperior,
+    Switch, Alert
+} from 'react-native';
 import {
-  alteraAtividade,
-  createTable,
-  obtemTodasAtividades,
-  alteraStatusAtividade,
-} from "../../services/atividadeService";
-import {
-  Ionicons,
-  Entypo,
-  AntDesign,
-  MaterialCommunityIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
+    alteraAtividade,
+    createTable,
+    obtemTodasAtividades,
+    alteraStatusAtividade,
+    excluiAtividade,
+    excluiTodasAtividades
+
+} from '../../services/atividadeService';
+import { Ionicons, Entypo, AntDesign, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 
 import styles from "./styles";
 import DropdownComponent from "../../Componentes/DropdownComponent";
@@ -163,6 +157,32 @@ export default function Home({ navigation }) {
               vetor={filtro} /> */}
 
 
+    function removerElemento(identificador) {
+        Alert.alert(`Atenção`, `Confirma a remoção da atividade ${identificador}?`,
+            [
+                {
+                    text: 'Sim',
+                    onPress: () => efetivaRemoverAtividade(identificador),
+                },
+                {
+                    text: 'Não',
+                    style: 'cancel',
+                }
+            ]);
+    }
+
+    async function efetivaRemoverAtividade(identificador) {
+        try {
+            await excluiAtividade(identificador);
+            //Keyboard.dismiss();
+            //limparCampos();
+            Alert.alert(`Atividade codigo ${identificador} apagado com sucesso!!!`);
+            setRecarregaTela(true);
+        } catch (e) {
+            Alert.alert(e);
+        }
+    }
+
     let filtro = [{ indice: '0', descricao: "Pendente" },
     { indice: '1', descricao: "Concluído" }, { indice: '1=1', descricao: "Todos" }]
 
@@ -217,7 +237,7 @@ export default function Home({ navigation }) {
                             >
                                 <FontAwesome name="remove" size={32} color="red" />
                             </TouchableOpacity>
-
+                            <Text></Text>
                             <TouchableOpacity onPress={() => editar(atividade.id)}>
                                 <Entypo name="edit" size={24} color="black" />
                             </TouchableOpacity>
