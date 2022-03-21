@@ -1,5 +1,4 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
     container: {
@@ -74,7 +73,6 @@ const styles = StyleSheet.create({
         //width: "10%",
         //borderWidth: 1.0,
     }
-
 });
 
 export default styles;
