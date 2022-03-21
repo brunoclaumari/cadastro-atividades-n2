@@ -25,22 +25,23 @@ import styles from "./styles";
 import DropdownComponent from "../../Componentes/DropdownComponent";
 
 export default function Home({ navigation }) {
-  const [listaAtividades, setListaAtividades] = useState([]);
-  const [recarregaTela, setRecarregaTela] = useState(true);
-  const [criarTabela, setCriarTabela] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [status, setStatus] = useState(0);
-  const [flagFiltro, setFlagFiltro] = useState("1=1");
-  const [userName, setUserName] = useState("DeveloperPlus");
 
-  async function carregarTodosOsDados() {
-    try {
-      let resposta = await obtemTodasAtividades();
-      setListaAtividades(resposta);
-      setRecarregaTela(false);
-      //limparCampos();
-    } catch (error) {
-      Alert.alert("Ocorreu um erro: " + error);
+    const [listaAtividades, setListaAtividades] = useState([]);
+    const [recarregaTela, setRecarregaTela] = useState(true);
+    const [criarTabela, setCriarTabela] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [status, setStatus] = useState(0);
+    const [flagFiltro, setFlagFiltro] = useState('1=1');
+
+    async function carregarTodosOsDados() {
+        try {
+            let resposta = await obtemTodasAtividades(flagFiltro);
+            setListaAtividades(resposta);
+            setRecarregaTela(false);
+            //limparCampos();
+        } catch (error) {
+            Alert.alert("Ocorreu um erro: " + error);
+        }
     }
   }
 
@@ -50,33 +51,58 @@ export default function Home({ navigation }) {
       setCriarTabela(true);
       await createTable();
     }
-    if (recarregaTela) {
-      console.log("Recarregando dados...");
-      await carregarTodosOsDados();
+
+
+    useEffect(
+        () => {
+            console.log('useEffect foi disparado');
+            processamentoUseEffect();
+        }, [recarregaTela]);
+
+    const toggleSwitch = () => {
+        //let chavear=false;
+        setStatus(0);
+        let textSwitch = { status: 0, cor: 'red', texto: 'Pendente' }
+        setIsEnabled(previousState => !previousState)
+        if (isEnabled == false) {
+            textSwitch.status = 1;
+            textSwitch.cor = 'green';
+            textSwitch.texto = 'Concluído';
+            setStatus(1);
+            //textSwitch = {cor:'green', texto:'Concluído'};      
+        }
+        else {
+            textSwitch.status = 0;
+            textSwitch.cor = 'red';
+            textSwitch.texto = 'Pendente';
+            setStatus(0);
+        }
+        setTextoSwitch(textSwitch)
+        console.log('mudou cor' + textSwitch.status)
+    };
+
+    function retornaPendencias(numero) {
+        //let vetor={cor:'red', status:'Pendente'}
+
+        if (numero === 0)
+            return { cor: 'red', status: 'Pendente', imagem: "toggle-switch-off" };
+        else
+            return { cor: 'green', status: 'Concluido', imagem: "toggle-switch" };
     }
-  }
 
-  useEffect(() => {
-    console.log("useEffect foi disparado");
-    processamentoUseEffect();
-  }, [recarregaTela]);
+    //    async function alteraStatus(thisId, thisStatus) {
+    async function alteraStatus(thisId, thisStatus) {
+        try {
+            thisStatus === 0 ? thisStatus = 1 : thisStatus = 0;
+            let resposta = await alteraStatusAtividade(thisId, thisStatus);
+            console.log(`Id: ${thisId} - status: ${thisStatus} - statusAlterado?: ${resposta}`);
+            //console.log(`Id: ${thisId} - status: ${thisStatus}`);
+            setRecarregaTela(true);
 
-  const toggleSwitch = () => {
-    //let chavear=false;
-    setStatus(0);
-    let textSwitch = { status: 0, cor: "red", texto: "Pendente" };
-    setIsEnabled((previousState) => !previousState);
-    if (isEnabled == false) {
-      textSwitch.status = 1;
-      textSwitch.cor = "green";
-      textSwitch.texto = "Concluído";
-      setStatus(1);
-      //textSwitch = {cor:'green', texto:'Concluído'};
-    } else {
-      textSwitch.status = 0;
-      textSwitch.cor = "red";
-      textSwitch.texto = "Pendente";
-      setStatus(0);
+        } catch (error) {
+            Alert.alert("Ocorreu um erro: " + error);
+        }
+
     }
     setTextoSwitch(textSwitch);
     //console.log("mudou cor" + textSwitch.status);
@@ -136,35 +162,18 @@ export default function Home({ navigation }) {
               value={indice} label="descricao" campoId="indice"
               vetor={filtro} /> */}
 
-      <ScrollView style={styles.listaContatos}>
-        {listaAtividades.map((atividade, index) => (
-          <View style={styles.atividade} key={index.toString()}>
-            <View style={styles.conteinerDescricoes}>
-              <Text style={styles.listaTexto}> {atividade.descricao}</Text>
-              <Text style={styles.listaTexto}> {atividade.data_entrega}</Text>
-              <Text
-                style={[
-                  styles.listaTexto,
-                  { color: `${retornaPendencias(atividade.status).cor}` },
-                ]}
-              >
-                {" "}
-                {retornaPendencias(atividade.status).status}
-              </Text>
-            </View>
-            <View style={styles.chave}>
-              <TouchableOpacity
-                onPress={() => alteraStatus(atividade.id, atividade.status)}
-              >
-                {/* <MaterialCommunityIcons name="toggle-switch-off-outline" size={45} color="black" /> */}
-                <MaterialCommunityIcons
-                  name={retornaPendencias(atividade.status).imagem}
-                  size={45}
-                  color={retornaPendencias(atividade.status).cor}
-                />
-              </TouchableOpacity>
-            </View>
 
+    let filtro = [{ indice: '0', descricao: "Pendente" },
+    { indice: '1', descricao: "Concluído" }, { indice: '1=1', descricao: "Todos" }]
+
+    return (
+
+        <View style={styles.container}>
+            <BarraSuperior
+                animated={true}
+                backgroundColor="#61dafb" />
+
+            <Text style={styles.titulo} >Cadastro de atividades</Text>
             <View style={styles.dadosBotoesAcao}>
               <TouchableOpacity onPress={() => removerElemento(atividade.id)}>
                 <FontAwesome name="remove" size={32} color="red" />
@@ -176,9 +185,49 @@ export default function Home({ navigation }) {
                 <Entypo name="edit" size={24} color="black" />
               </TouchableOpacity>
             </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
+
+            <Text></Text>
+            <DropdownComponent setValue={setFlagFiltro}
+                setRecarregaTela={setRecarregaTela}
+                recarrega={true}
+                value={flagFiltro} label="descricao" campoId="indice"
+                vetor={filtro} />
+
+            <ScrollView style={styles.listaContatos}>
+                {listaAtividades.map((atividade, index) => (
+                    <View style={styles.atividade} key={index.toString()}>
+                        <View style={styles.conteinerDescricoes}>
+                            <Text style={styles.listaTexto}> {atividade.descricao}</Text>
+                            <Text style={styles.listaTexto}> {atividade.data_entrega}</Text>
+                            <Text style={[styles.listaTexto, { color: `${retornaPendencias(atividade.status).cor}` }]}> {retornaPendencias(atividade.status).status}</Text>
+                        </View>
+                        <View style={styles.chave}>
+
+                            <TouchableOpacity onPress={() =>
+                                alteraStatus(atividade.id, atividade.status)
+                            } >
+                                {/* <MaterialCommunityIcons name="toggle-switch-off-outline" size={45} color="black" /> */}
+                                <MaterialCommunityIcons name={retornaPendencias(atividade.status).imagem} size={45} color={retornaPendencias(atividade.status).cor} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.dadosBotoesAcao}>
+                            <TouchableOpacity
+                                onPress={() => removerElemento(atividade.id)}
+                            >
+                                <FontAwesome name="remove" size={32} color="red" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => editar(atividade.id)}>
+                                <Entypo name="edit" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+
+
+        </View>
+    );
+}  
+

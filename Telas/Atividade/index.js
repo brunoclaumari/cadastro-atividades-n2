@@ -227,14 +227,14 @@ export default function Atividade({ navigation }) {
             </View>
           </>
           <>
-            <Text style={styles.legendaCampo}>Tipo de Atividade</Text>
-            <DropdownComponent
-              setValue={setIdTipoAtividade}
-              value={idTipoAtividade}
-              label="descricao"
-              campoId="id"
-              vetor={tipoAtividade}
-            />
+
+            <Text style={styles.legendaCampo} >Tipo de Atividade</Text>
+            <DropdownComponent setValue={setIdTipoAtividade}
+              setRecarregaTela={setRecarregaTela}
+              recarrega={false}
+              value={idTipoAtividade} label="descricao" campoId="id"
+              vetor={tipoAtividade} />
+
           </>
           <>
             <Text style={styles.legendaCampo}>Local da Atividades</Text>
