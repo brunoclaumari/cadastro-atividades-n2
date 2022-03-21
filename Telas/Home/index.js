@@ -1,23 +1,28 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
-    ScrollView, Text, View,
-    TouchableOpacity, StatusBar as BarraSuperior,
-    Switch
-} from 'react-native';
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  StatusBar as BarraSuperior,
+  Switch,
+} from "react-native";
 import {
-    alteraAtividade,
-    createTable,
-    obtemTodasAtividades,
-    alteraStatusAtividade
+  alteraAtividade,
+  createTable,
+  obtemTodasAtividades,
+  alteraStatusAtividade,
+} from "../../services/atividadeService";
+import {
+  Ionicons,
+  Entypo,
+  AntDesign,
+  MaterialCommunityIcons,
+  FontAwesome,
+} from "@expo/vector-icons";
 
-} from '../../services/atividadeService';
-import { Ionicons, Entypo, AntDesign, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
-
-import styles from './styles';
-import DropdownComponent from '../../Componentes/DropdownComponent';
-
-
+import styles from "./styles";
+import DropdownComponent from "../../Componentes/DropdownComponent";
 
 export default function Home({ navigation }) {
 
@@ -38,18 +43,15 @@ export default function Home({ navigation }) {
             Alert.alert("Ocorreu um erro: " + error);
         }
     }
+  }
 
-    async function processamentoUseEffect() {
-        if (!criarTabela) {
-            console.log("Verificando necessidade de criar tabelas...");
-            setCriarTabela(true);
-            await createTable();
-        }
-        if (recarregaTela) {
-            console.log("Recarregando dados...");
-            await carregarTodosOsDados();
-        }
+  async function processamentoUseEffect() {
+    if (!criarTabela) {
+      console.log("Verificando necessidade de criar tabelas...");
+      setCriarTabela(true);
+      await createTable();
     }
+
 
     useEffect(
         () => {
@@ -100,7 +102,66 @@ export default function Home({ navigation }) {
         } catch (error) {
             Alert.alert("Ocorreu um erro: " + error);
         }
+
     }
+    setTextoSwitch(textSwitch);
+    //console.log("mudou cor" + textSwitch.status);
+  };
+
+  function retornaPendencias(numero) {
+    //let vetor={cor:'red', status:'Pendente'}
+
+    if (numero === 0)
+      return { cor: "red", status: "Pendente", imagem: "toggle-switch-off" };
+    else return { cor: "green", status: "Concluido", imagem: "toggle-switch" };
+  }
+
+  //    async function alteraStatus(thisId, thisStatus) {
+  async function alteraStatus(thisId, thisStatus) {
+    try {
+      thisStatus === 0 ? (thisStatus = 1) : (thisStatus = 0);
+      let resposta = await alteraStatusAtividade(thisId, thisStatus);
+      /* console.log(
+        `Id: ${thisId} - status: ${thisStatus} - statusAlterado?: ${resposta}`
+      );*/
+      //console.log(`Id: ${thisId} - status: ${thisStatus}`);
+      setRecarregaTela(true);
+    } catch (error) {
+      Alert.alert("Ocorreu um erro: " + error);
+    }
+  }
+
+  const filtro = [
+    { indice: "0", descricao: "Pendente" },
+    { indice: "1", descricao: "Concluído" },
+    { indice: "1=1", descricao: "Todos" },
+  ];
+
+  return (
+    <View style={styles.container}>
+      <BarraSuperior animated={true} backgroundColor="#61dafb" />
+
+      <Text style={styles.titulo}>Cadastro de atividades</Text>
+
+      <View style={styles.conteinerBotao}>
+        <TouchableOpacity
+          style={styles.botaoHome}
+          onPress={() => navigation.navigate("Atividade")}
+        >
+          <Text style={styles.textoBotao}>Atividades</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.botaoHome}
+          onPress={() => navigation.navigate("TipoAtividade")}
+        >
+          <Text style={styles.textoBotao}>Tipo de Atividades</Text>
+        </TouchableOpacity>
+      </View>
+      {/*             <DropdownComponent setValue={setFlagFiltro}
+              value={indice} label="descricao" campoId="indice"
+              vetor={filtro} /> */}
+
 
     let filtro = [{ indice: '0', descricao: "Pendente" },
     { indice: '1', descricao: "Concluído" }, { indice: '1=1', descricao: "Todos" }]
@@ -113,18 +174,18 @@ export default function Home({ navigation }) {
                 backgroundColor="#61dafb" />
 
             <Text style={styles.titulo} >Cadastro de atividades</Text>
+            <View style={styles.dadosBotoesAcao}>
+              <TouchableOpacity onPress={() => removerElemento(atividade.id)}>
+                <FontAwesome name="remove" size={32} color="red" />
+              </TouchableOpacity>
 
-            <View style={styles.conteinerBotao}>
-                <TouchableOpacity style={styles.botaoHome}
-                    onPress={() => navigation.navigate('Atividade')}>
-                    <Text style={styles.textoBotao}>Atividades</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.botaoHome}
-                    onPress={() => navigation.navigate('TipoAtividade')}>
-                    <Text style={styles.textoBotao}>Tipo de Atividades</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Atividade", atividade)}
+              >
+                <Entypo name="edit" size={24} color="black" />
+              </TouchableOpacity>
             </View>
+
             <Text></Text>
             <DropdownComponent setValue={setFlagFiltro}
                 setRecarregaTela={setRecarregaTela}
@@ -169,3 +230,4 @@ export default function Home({ navigation }) {
         </View>
     );
 }  
+

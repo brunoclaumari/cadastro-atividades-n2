@@ -22,8 +22,9 @@ import {
   excluiTodosTipoAtividade,
 } from "../../services/tipoAtividadeService";
 
-export default function TipoAtividade({ navigation }) {
+import { recebeCodigo } from "../../services/atividadeService";
 
+export default function TipoAtividade({ navigation }) {
   const [id, setId] = useState();
   const [descricao, setDescricao] = useState();
   const [listaTipoAtividade, setlistaTipoAtividade] = useState([]);
@@ -201,6 +202,7 @@ export default function TipoAtividade({ navigation }) {
             style={styles.caixaTexto}
             onChangeText={(texto) => setDescricao(texto)}
             value={descricao}
+            /*value={mostraDescricao()}*/
           />
         </View>
       </View>

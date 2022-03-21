@@ -1,5 +1,8 @@
 import * as SQLite from "expo-sqlite";
 
+//variavel para passar id para tela de edicao
+var objetoAtividade;
+
 // variaveis usadas nas querys
 let tabela = "tbAtividade";
 
@@ -39,10 +42,8 @@ export async function createTable() {
 
     let dbConn = getDbConnection();
     dbConn.transaction(
-      (tr) => tr.executeSql(comando, [],
-        (tr, resposta) => resolve(true)
-      ),
-      error => {
+      (tr) => tr.executeSql(comando, [], (tr, resposta) => resolve(true)),
+      (error) => {
         console.log(error);
         resolve(false);
       }
@@ -58,9 +59,9 @@ export function obtemTodasAtividades(flagFiltro) {
     filtro = `status = ${Number.parseInt(flagFiltro)}`;
 
   return new Promise((resolve, reject) => {
-
     let dbCx = getDbConnection();
     //var retorno = {};
+
     dbCx.transaction(tx => {
       let comando = `select * from ${tabela} WHERE ${filtro} `;
       console.log(comando);
@@ -80,24 +81,23 @@ export function obtemTodasAtividades(flagFiltro) {
                 local_atividade: registros.rows.item(n).local_atividade,
                 data_entrega: registros.rows.item(n).data_entrega,
                 hora_entrega: registros.rows.item(n).hora_entrega,
-                status: registros.rows.item(n).status
-              }
+                status: registros.rows.item(n).status,
+              };
               //console.log(`Objeto ${n} - ${JSON.stringify(obj)}`)
               retorno.push(obj);
             }
           }
 
-          console.log(`Retorno: ${JSON.stringify(retorno)}`);
+          //console.log(`Retorno: ${JSON.stringify(retorno)}`);
           resolve(retorno);
-        })
-    },
-      error => {
+        });
+      },
+      (error) => {
         console.log(error);
         resolve([]);
       }
-    )
-  }
-  );
+    );
+  });
 }
 
 //Adiciona uma atividade no banco
@@ -116,30 +116,34 @@ export function adicionaAtividade(atividade) {
        VALUES (?,?,?,?,?,?)`;
     let dbCx = getDbConnection();
 
-    dbCx.transaction(tx => {
-      tx.executeSql(comando,
-        [atividade.id_tipo_atividade,
-        atividade.descricao,
-        atividade.local_atividade,
-        atividade.data_entrega,
-        atividade.hora_entrega,
-        atividade.status],
-        (tx, resultado) => {
-          resolve(resultado.rowsAffected > 0);
-        })
-    },
-      error => {
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(
+          comando,
+          [
+            atividade.id_tipo_atividade,
+            atividade.descricao,
+            atividade.local_atividade,
+            atividade.data_entrega,
+            atividade.hora_entrega,
+            atividade.status,
+          ],
+          (tx, resultado) => {
+            resolve(resultado.rowsAffected > 0);
+          }
+        );
+      },
+      (error) => {
         console.log(error);
         resolve(false);
       }
-    )
-  }
-  );
+    );
+  });
 }
 
 //Altera Atividade
 export function alteraAtividade(atividade) {
-  console.log('Início do método alteraAtividade');
+  console.log("Início do método alteraAtividade");
   return new Promise((resolve, reject) => {
     //let comando = `UPDATE ${tabela} set nome=?, email=?, senha=?, confirmaSenha=?  WHERE codigo=?`;
     let comando = `UPDATE ${tabela} SET 
@@ -147,96 +151,53 @@ export function alteraAtividade(atividade) {
     WHERE id=?`;
     let dbCx = getDbConnection();
 
-    dbCx.transaction(tx => {
-      tx.executeSql(comando,
-        [atividade.id_tipo_atividade,
-        atividade.descricao,
-        atividade.local_atividade,
-        atividade.data_entrega,
-        atividade.hora_entrega,
-        atividade.status,
-        atividade.id],
-        (tx, resultado) => {
-          resolve(resultado.rowsAffected > 0);
-        })
-    },
-      error => {
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(
+          comando,
+          [
+            atividade.id_tipo_atividade,
+            atividade.descricao,
+            atividade.local_atividade,
+            atividade.data_entrega,
+            atividade.hora_entrega,
+            atividade.status,
+            atividade.id,
+          ],
+          (tx, resultado) => {
+            resolve(resultado.rowsAffected > 0);
+          }
+        );
+      },
+      (error) => {
         console.log(error);
         resolve(false);
       }
-    )
-  }
-  );
+    );
+  });
 }
 
 //Altera status do componente
 export function alteraStatusAtividade(id, status) {
-  console.log('Início do método alteraStatusAtividade');
+  console.log("Início do método alteraStatusAtividade");
 
   return new Promise((resolve, reject) => {
     //let comando = `UPDATE ${tabela} set nome=?, email=?, senha=?, confirmaSenha=?  WHERE codigo=?`;
     let comando = `UPDATE ${tabela} SET status=? WHERE id=?`;
     let dbCx = getDbConnection();
 
-    dbCx.transaction(tx => {
-      tx.executeSql(comando,
-        [
-        status,
-        id],
-        (tx, resultado) => {
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(comando, [status, id], (tx, resultado) => {
           resolve(resultado.rowsAffected > 0);
-        })
-    },
-      error => {
+        });
+      },
+      (error) => {
         console.log(error);
         resolve(false);
       }
-    )
-  }
-  );
-}
-
-//Exclui atividade pelo 'id'
-export function excluiAtividade(id) {
-  console.log('Apagando atividade código: ' + id);
-  return new Promise((resolve, reject) => {
-      let comando = `DELETE from ${tabela} where id=?`;
-      let dbCx = getDbConnection();
-
-      dbCx.transaction(tx => {
-          tx.executeSql(comando, [id],
-              (tx, resultado) => {
-                  resolve(resultado.rowsAffected > 0);
-              })
-      },
-          error => {
-              console.log(error);
-              resolve(false);
-          }
-      )
-  }
-  );
-}
-
-//Exclui todas as atividades
-export function excluiTodasAtividades() {
-  console.log("Apagando todas as atividades...");
-  return new Promise((resolve, reject) => {
-      //let query = 'delete from tbContatos';
-      let comando = `DELETE FROM ${tabela}`;
-      let dbCx = getDbConnection();
-      dbCx.transaction(tx => {
-          tx.executeSql(comando, [],
-              (tx, resultado) => resolve(resultado.rowsAffected > 0)
-          );
-      },
-          error => {
-              console.log(error);
-              resolve(false);
-          }
-      );
-  }
-  );
+    );
+  });
 }
 
 //Método para validar data
@@ -245,44 +206,43 @@ export function validaDataX(data) {
   var regex = "\\d{2}/\\d{2}/\\d{4}";
   var dtArray = data.split("/");
 
-  if (dtArray == null)
-    return false;
+  if (dtArray == null) return false;
 
   // Checks for dd/mm/yyyy format.
   var dtDay = dtArray[0];
   var dtMonth = dtArray[1];
   var dtYear = dtArray[2];
 
-  if (dtMonth < 1 || dtMonth > 12)
-    return false;
-  else if (dtDay < 1 || dtDay > 31)
-    return false;
-  else if ((dtMonth == 4 || dtMonth == 6 || dtMonth == 9 || dtMonth == 11) && dtDay == 31)
+  if (dtMonth < 1 || dtMonth > 12) return false;
+  else if (dtDay < 1 || dtDay > 31) return false;
+  else if (
+    (dtMonth == 4 || dtMonth == 6 || dtMonth == 9 || dtMonth == 11) &&
+    dtDay == 31
+  )
     return false;
   else if (dtMonth == 2) {
-    var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
-    if (dtDay > 29 || (dtDay == 29 && !isleap))
-      return false;
+    var isleap = dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0);
+    if (dtDay > 29 || (dtDay == 29 && !isleap)) return false;
   }
   return true;
 }
 
-export function validaData(data){
+export function validaData(data) {
   let ehValido = false;
-  let msg = '';
-  const dataValida=/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/[12][0-9]{3}$/;
-  if(dataValida.test(data)){
-    ehValido=true;
-  }
-  else{
-    msg += 'Data inválida \n';
+  let msg = "";
+  const dataValida =
+    /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/[12][0-9]{3}$/;
+  if (dataValida.test(data)) {
+    ehValido = true;
+  } else {
+    msg += "Data inválida \n";
     ehValido = false;
   }
-  console.log(`Data válida: ${ehValido}`);  
+  console.log(`Data válida: ${ehValido}`);
   return msg;
 }
 
-export function validaHora(hora){
+export function validaHora(hora) {
   let ehValido = false;
   let msg = '';
   //const horaValida = /^([0-2][0-3]|[2][0-3]):[0-5][0-9]$/;
@@ -295,15 +255,94 @@ export function validaHora(hora){
     msg+="Hora inválida! \n"
   }
 
-  console.log(`Hora válida: ${ehValido}`);  
+  console.log(`Hora válida: ${ehValido}`);
   return msg;
 }
 
-export function validaTudo(data, hora){  
-  let mensagemErro='';
+/*export function obtemUmaAtividade(id) {
+  console.log("começando o o método obtemUmaAtividade");
+  //console.log(tipo_atividade);
+  return new Promise((resolve, reject) => {
+    let query = `SELECT * FROM ${tabela} where id = ?`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(query, [id], (tx, registros) => {
+          var retorno = [];
+
+          if (registros.rows.length > 0) {
+            let obj = {
+              id: registros.rows.item(0).id,
+              id_tipo_atividade: registros.rows.item(0).id_tipo_atividade,
+              descricao: registros.rows.item(0).descricao,
+              local_atividade: registros.rows.item(0).local_atividade,
+              data_entrega: registros.rows.item(0).data_entrega,
+              hora_entrega: registros.rows.item(0).hora_entrega,
+              status: registros.rows.item(0).status,
+            };
+            retorno.push(obj);
+          }
+
+          resolve(retorno);
+        });
+      },
+      (error) => {
+        console.log(error.toString());
+        resolve([]);
+      }
+    );
+  });
+}*/
+
+export function obtemUmaAtividade(id) {
+  console.log("começando o o método obtemUmaAtividade");
+  //console.log(tipo_atividade);
+  return new Promise((resolve, reject) => {
+    let query = `SELECT * FROM ${tabela} where id = 1`;
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(query, [], (tx, registros) => {
+          var retorno = [];
+
+          if (registros.rows.length > 0) {
+            let obj = {
+              id: registros.rows.item(0).id,
+              id_tipo_atividade: registros.rows.item(0).id_tipo_atividade,
+              descricao: registros.rows.item(0).descricao,
+              local_atividade: registros.rows.item(0).local_atividade,
+              data_entrega: registros.rows.item(0).data_entrega,
+              hora_entrega: registros.rows.item(0).hora_entrega,
+              status: registros.rows.item(0).status,
+            };
+            retorno.push(obj);
+            console.log(JSON.stringify(obj));
+          }
+
+          resolve(retorno.toString());
+        });
+      },
+      (error) => {
+        console.log(error.toString());
+        resolve([]);
+      }
+    );
+  });
+}
+
+export function validaTudo(data, hora) {
+  let mensagemErro = "";
   mensagemErro += validaData(data) + validaHora(hora);
-  
+
   return mensagemErro;
 }
 
+export function recebeAtividade() {
+  return objetoAtividade;
+}
 
+export function enviaAtividade(atividade) {
+  objetoAtividade = atividade;
+}
